@@ -4,22 +4,30 @@
  * as a guideline for developing your own functions.
  */
 
+
 #include "trab.h"
 #include <time.h>
+
+
 
 
 void
 progjogo_1(char *host)
 {
 	CLIENT *clnt;
+
 	control  *result_1;
 	control  whatdoto_1_arg;
-	control  *result_2;
-	control  checkhost_1_arg;
+
+	//control  *result_2;
+	//control  checkhost_1_arg;
+
 	form  *result_3;
 	form  sendask_1_arg;
+
 	form  *result_4;
 	form  sendanswer_1_arg;
+
 	infoperson  *result_5;
 	infoperson  nicetomeetyou_1_arg;
 
@@ -51,9 +59,26 @@ progjogo_1(char *host)
 
 			switch(result_1->action)
 			{
-				case 1:
-				case 2:
-				case 3:
+				case 1://se é coordenador
+					break;
+
+				case 2://se está recebendo questões
+					result_3 = sendask_1(&sendask_1_arg, clnt);
+					if (result_3 == (form *) NULL) {
+						clnt_perror (clnt, "call failed");
+					}
+
+					printf("%s",result_3)
+					break;
+
+				// case 3://se está enviando respostas
+
+				// 	result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
+				// 	if (result_4 == (form *) NULL) {
+				// 		clnt_perror (clnt, "call failed");
+				// 	}
+				// 	break;
+
 				default:
 					sleep(1);
 			}
