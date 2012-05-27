@@ -22,7 +22,7 @@ typedef struct commomattributtes commomattributtes;
 
 struct control {
 	int action;
-	commomattributes attr;
+	commomattributtes attr;
 };
 typedef struct control control;
 
@@ -32,14 +32,14 @@ struct form {
 	char options[140];
 	int answer[3];
 	int next;
-	commomattributes attr;
+	commomattributtes attr;
 };
 typedef struct form form;
 
 struct infoperson {
 	char name[40];
 	int age;
-	commomattributes attr;
+	commomattributtes attr;
 };
 typedef struct infoperson infoperson;
 

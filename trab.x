@@ -5,7 +5,7 @@ struct commomattributtes{
 
 struct control{
 	int action;
-	commomattributes attr;
+	commomattributtes attr;
 };
 
 struct form{
@@ -14,13 +14,13 @@ struct form{
 	char options[140];
 	int answer[3];
 	int next;
-	commomattributes attr;
+	commomattributtes attr;
 };
 
 struct infoperson{
 	char name[40];
 	int age;
-	commomattributes attr;
+	commomattributtes attr;
 };
 
 program PROGJOGO{

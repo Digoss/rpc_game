@@ -40,20 +40,22 @@ progjogo_1(char *host)
 	if (result_5 == (infoperson *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	if(result_5->attr.boolenvar)
+	if(result_5->attr.booleanVar)
 	{
-		while(1){
+		while(1)
+		{
 			result_1 = whatdoto_1(&whatdoto_1_arg, clnt);
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
 			}
 
-			switch(result_1.action)
+			switch(result_1->action)
 			{
-
+				case 1:
+				case 2:
+				case 3:
 				default:
 					sleep(1);
-
 			}
 		}
 	}
@@ -69,6 +71,7 @@ progjogo_1(char *host)
 	// if (result_4 == (form *) NULL) {
 	// 	clnt_perror (clnt, "call failed");
 	// }
+
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */

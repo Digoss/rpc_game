@@ -3,8 +3,8 @@
 
 # Parameters
 
-CLIENT = trab_client
-SERVER = trab_server
+CLIENT = trab_client.bin
+SERVER = trab_server.bin
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 

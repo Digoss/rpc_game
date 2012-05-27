@@ -26,7 +26,7 @@ xdr_control (XDR *xdrs, control *objp)
 
 	 if (!xdr_int (xdrs, &objp->action))
 		 return FALSE;
-	 if (!xdr_commomattributes (xdrs, &objp->attr))
+	 if (!xdr_commomattributtes (xdrs, &objp->attr))
 		 return FALSE;
 	return TRUE;
 }
@@ -66,7 +66,7 @@ xdr_form (XDR *xdrs, form *objp)
 		}
 		IXDR_PUT_LONG(buf, objp->next);
 		}
-		 if (!xdr_commomattributes (xdrs, &objp->attr))
+		 if (!xdr_commomattributtes (xdrs, &objp->attr))
 			 return FALSE;
 		return TRUE;
 	} else if (xdrs->x_op == XDR_DECODE) {
@@ -97,7 +97,7 @@ xdr_form (XDR *xdrs, form *objp)
 		}
 		objp->next = IXDR_GET_LONG(buf);
 		}
-		 if (!xdr_commomattributes (xdrs, &objp->attr))
+		 if (!xdr_commomattributtes (xdrs, &objp->attr))
 			 return FALSE;
 	 return TRUE;
 	}
@@ -115,7 +115,7 @@ xdr_form (XDR *xdrs, form *objp)
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->next))
 		 return FALSE;
-	 if (!xdr_commomattributes (xdrs, &objp->attr))
+	 if (!xdr_commomattributtes (xdrs, &objp->attr))
 		 return FALSE;
 	return TRUE;
 }
@@ -131,7 +131,7 @@ xdr_infoperson (XDR *xdrs, infoperson *objp)
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->age))
 		 return FALSE;
-	 if (!xdr_commomattributes (xdrs, &objp->attr))
+	 if (!xdr_commomattributtes (xdrs, &objp->attr))
 		 return FALSE;
 	return TRUE;
 }
