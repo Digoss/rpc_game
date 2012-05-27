@@ -7,6 +7,7 @@
 
 #include "trab.h"
 #include <time.h>
+#include <string.h>
 
 
 
@@ -52,6 +53,7 @@ progjogo_1(char *host)
 	{
 		while(1)
 		{
+			int i;
 			result_1 = whatdoto_1(&whatdoto_1_arg, clnt);
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
@@ -63,12 +65,28 @@ progjogo_1(char *host)
 					break;
 
 				case 2://se está recebendo questões
-					result_3 = sendask_1(&sendask_1_arg, clnt);
-					if (result_3 == (form *) NULL) {
-						clnt_perror (clnt, "call failed");
-					}
+					i=3;
+					while(i--)
+					{
+						result_3 = sendask_1(&sendask_1_arg, clnt);
+						if (result_3 == (form *) NULL) {
+							clnt_perror (clnt, "call failed");
+						}
 
-					printf("%s",result_3)
+						printf("%s\n",result_3->ask);
+
+						printf("%s\n",result_3->options);
+
+						printf("Put the number of your answer\n");
+						scanf("%d",&sendanswer_1_arg.answer);
+						strcpy(sendanswer_1_arg.attr.address, host);
+
+						result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
+						if (result_4 == (form *) NULL) {
+							clnt_perror (clnt, "call failed");
+						}
+
+					}
 					break;
 
 				// case 3://se está enviando respostas
