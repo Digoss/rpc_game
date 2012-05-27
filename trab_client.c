@@ -5,6 +5,7 @@
  */
 
 #include "trab.h"
+#include <time.h>
 
 
 void
@@ -30,26 +31,44 @@ progjogo_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	result_1 = whatdoto_1(&whatdoto_1_arg, clnt);
-	if (result_1 == (control *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_2 = checkhost_1(&checkhost_1_arg, clnt);
-	if (result_2 == (control *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = sendask_1(&sendask_1_arg, clnt);
-	if (result_3 == (form *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
-	if (result_4 == (form *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
+	printf("Put your name!");
+	scanf("%s",&nicetomeetyou_1_arg.name);
+	printf("Put your age!");
+	scanf("%d",&nicetomeetyou_1_arg.age);
+
 	result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
 	if (result_5 == (infoperson *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+	if(result_5->attr.boolenvar)
+	{
+		while(1){
+			result_1 = whatdoto_1(&whatdoto_1_arg, clnt);
+			if (result_1 == (control *) NULL) {
+				clnt_perror (clnt, "call failed");
+			}
+
+			switch(result_1.action)
+			{
+
+				default:
+					sleep(1);
+
+			}
+		}
+	}
+	// result_2 = checkhost_1(&checkhost_1_arg, clnt);
+	// if (result_2 == (control *) NULL) {
+	// 	clnt_perror (clnt, "call failed");
+	// }
+	// result_3 = sendask_1(&sendask_1_arg, clnt);
+	// if (result_3 == (form *) NULL) {
+	// 	clnt_perror (clnt, "call failed");
+	// }
+	// result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
+	// if (result_4 == (form *) NULL) {
+	// 	clnt_perror (clnt, "call failed");
+	// }
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
@@ -59,13 +78,13 @@ progjogo_1(char *host)
 int
 main (int argc, char *argv[])
 {
-	char *host;
+	char *host = "localhost";
 
 	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
-		exit (1);
+		//printf ("usage: %s server_host\n", argv[0]);
+		//exit (1);
 	}
-	host = argv[1];
+	//host = argv[1];
 	progjogo_1 (host);
 exit (0);
 }
