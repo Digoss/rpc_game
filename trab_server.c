@@ -1,9 +1,15 @@
 
 #include "trab.h"
-int current_user;
+#include "trab_cln.c"
+#include <string.h>
+
+
+int current_user, manager;
+
 struct user_ip{
 	char name[60];	
 	char ip[30];
+	int keepAlive;
 };
 
 
@@ -62,8 +68,16 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 {
 	static form  result;
 
-	//manda pra deus e pro mundo
-
+	//manda pro chefao 
+	if(argp->attr.booleanVar)
+	{
+		//caso eu seja o grandao
+	}
+	else
+	{
+		list[manager]
+		//manda pro grandao
+	}
 	return &result;
 }
 
