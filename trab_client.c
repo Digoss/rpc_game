@@ -40,10 +40,10 @@ progjogo_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	printf("Put your name!");
-	scanf("%s",&nicetomeetyou_1_arg.name);
-	printf("Put your age!");
-	scanf("%d",&nicetomeetyou_1_arg.age);
+	//printf("Put your name!");
+	//scanf("%s",&nicetomeetyou_1_arg.name);
+	//printf("Put your age!");
+	//scanf("%d",&nicetomeetyou_1_arg.age);
 
 	result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
 	if (result_5 == (infoperson *) NULL) {
@@ -62,6 +62,7 @@ progjogo_1(char *host)
 			switch(result_1->action)
 			{
 				case 1://se é coordenador
+					//seleciona as perguntas
 					break;
 
 				case 2://se está recebendo questões
@@ -80,6 +81,7 @@ progjogo_1(char *host)
 						printf("Put the number of your answer\n");
 						scanf("%d",&sendanswer_1_arg.answer);
 						strcpy(sendanswer_1_arg.attr.address, host);
+						sendanswer_1_arg.attr.booleanVar = 0;
 
 						result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
 						if (result_4 == (form *) NULL) {
