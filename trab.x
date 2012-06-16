@@ -12,7 +12,7 @@ struct form{
 	int ask_id;
 	char ask[140];
 	char options[140];
-	int answer;
+	int answer[3];
 	int next;
 	commomattributtes attr;
 };
