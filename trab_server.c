@@ -1,8 +1,13 @@
 
 #include "trab.h"
-#include "trab_cln.c"
+#include "trab_clnt.c"
 #include <string.h>
 
+int has_ask = 0;
+
+form ask[3];
+
+form answer[10];
 
 int current_user, manager;
 
@@ -12,23 +17,22 @@ struct user_ip{
 	int keepAlive;
 };
 
+struct user_ip list[10];
+
+
 int
 find_by_address(commomattributtes attr)
 {
 	int i;
 	for(i=0;i<10;i++)
-		if(strcmp(attr.address,list[i])==0)
+		if(strcmp(attr.address,list[i].ip)==0)
 			return i;
+	printf("Endereco nao encontrado\n");
+	exit(0);
 }
 
 //fazer parse de um arquivo que contenha o endereco ip dos hosts
-struct user_ip list[10];
 
-int has_ask = 0;
-
-form ask;
-
-form answer[10][3];
 
 control *
 whatdoto_1_svc(control *argp, struct svc_req *rqstp)
@@ -70,7 +74,6 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 {
 	static form  result;
 
-		//falta codigo para quando o grandao esta enviando a pergunta
 	//if eu sou  o grandao
 	if(current_user == manager)
 	{
@@ -79,34 +82,39 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 		form  *result_3;
 		form  sendask_1_arg;
 
+		memcpy(&sendask_1_arg, argp, sizeof(form));
+
 		int i;
 		for(i=0;i<10;i++)
 		{
 			if(current_user != i)
 			{
-				clnt = clnt_create (list[current_user], PROGJOGO, VERJOGO, "udp");
+				char *host = list[i].ip;
+				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
-					clnt_pcreateerror (list[current_user]);
-					exit (1);
+					clnt_pcreateerror (host);
+					//exit (1);
+					continue;
 				}
 				//send msg
+				sendask_1_arg.attr.booleanVar = 1;
 				result_3 = sendask_1(&sendask_1_arg, clnt);
 				if (result_3 == (form *) NULL) {
 					clnt_perror (clnt, "call failed");
 				}
-
+				//manter um array com os participantes que receberao a pergunta
 				///ainda necessita dos tratamentos de erro
 			}
 		}
 	}
 	if(argp->attr.booleanVar)
 	{
-		memcpy(&ask,argp,sizeof(form));//caso eu esteja recebendo uma questao do grandao
+		memcpy(&ask[argp->next],argp,sizeof(form));//caso eu esteja recebendo uma questao do grandao
 		has_ask = 1;
 	}
 	else
 	{
-		memcpy(&result,&ask,sizeof(form));//caso eu esteja recebendo um requisicao do cliente
+		memcpy(&result,&ask[argp->next],sizeof(form));//caso eu esteja recebendo um requisicao do cliente
 	}
 
 	return &result;
@@ -117,19 +125,38 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 {
 	static form  result;
 
-	//manda pro chefao
-	if(argp->attr.booleanVar)
+	//if(argp->attr.booleanVar)
+	if(current_user == manager)
 	{
 		int index = find_by_address(argp->attr);
-		memcpy(answer[index],argp,sizeof(form));
+		int formsize = sizeof(form);
+		memcpy(answer+index*formsize, argp, formsize);
 		//caso eu seja o grandao
 		//chamar metodo para tratar informacoes
 	}
+	//manda pro chefao
 	else
 	{
-		list[manager]
+		memcpy(&answer[current_user],argp,sizeof(form));
+
+		CLIENT *clnt;
+		form  *result_4;
+		form  sendanswer_1_arg;
+
+		memcpy(&sendanswer_1_arg, &answer[current_user], sizeof(form));
+
+		char *host = list[manager].ip;
+		clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+		if (clnt == NULL) {
+			clnt_pcreateerror (host);
+			exit (1);
+		}
+		result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
+		if (result_4 == (form *) NULL) {
+		 	clnt_perror (clnt, "call failed");
+		}
 		//manda pro grandao
-		//tratamento caso ele esteja morto
+		//falta tratamento caso ele esteja morto
 	}
 	return &result;
 }

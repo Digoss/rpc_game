@@ -37,6 +37,71 @@ xdr_form (XDR *xdrs, form *objp)
 	register int32_t *buf;
 
 	int i;
+
+	if (xdrs->x_op == XDR_ENCODE) {
+		 if (!xdr_int (xdrs, &objp->ask_id))
+			 return FALSE;
+		 if (!xdr_vector (xdrs, (char *)objp->ask, 140,
+			sizeof (char), (xdrproc_t) xdr_char))
+			 return FALSE;
+		 if (!xdr_vector (xdrs, (char *)objp->options, 140,
+			sizeof (char), (xdrproc_t) xdr_char))
+			 return FALSE;
+		buf = XDR_INLINE (xdrs, (1 + ( 3 )) * BYTES_PER_XDR_UNIT);
+		if (buf == NULL) {
+			 if (!xdr_vector (xdrs, (char *)objp->answer, 3,
+				sizeof (int), (xdrproc_t) xdr_int))
+				 return FALSE;
+			 if (!xdr_int (xdrs, &objp->next))
+				 return FALSE;
+
+		} else {
+		{
+			register int *genp;
+
+			for (i = 0, genp = objp->answer;
+				i < 3; ++i) {
+				IXDR_PUT_LONG(buf, *genp++);
+			}
+		}
+		IXDR_PUT_LONG(buf, objp->next);
+		}
+		 if (!xdr_commomattributtes (xdrs, &objp->attr))
+			 return FALSE;
+		return TRUE;
+	} else if (xdrs->x_op == XDR_DECODE) {
+		 if (!xdr_int (xdrs, &objp->ask_id))
+			 return FALSE;
+		 if (!xdr_vector (xdrs, (char *)objp->ask, 140,
+			sizeof (char), (xdrproc_t) xdr_char))
+			 return FALSE;
+		 if (!xdr_vector (xdrs, (char *)objp->options, 140,
+			sizeof (char), (xdrproc_t) xdr_char))
+			 return FALSE;
+		buf = XDR_INLINE (xdrs, (1 + ( 3 )) * BYTES_PER_XDR_UNIT);
+		if (buf == NULL) {
+			 if (!xdr_vector (xdrs, (char *)objp->answer, 3,
+				sizeof (int), (xdrproc_t) xdr_int))
+				 return FALSE;
+			 if (!xdr_int (xdrs, &objp->next))
+				 return FALSE;
+
+		} else {
+		{
+			register int *genp;
+
+			for (i = 0, genp = objp->answer;
+				i < 3; ++i) {
+				*genp++ = IXDR_GET_LONG(buf);
+			}
+		}
+		objp->next = IXDR_GET_LONG(buf);
+		}
+		 if (!xdr_commomattributtes (xdrs, &objp->attr))
+			 return FALSE;
+	 return TRUE;
+	}
+
 	 if (!xdr_int (xdrs, &objp->ask_id))
 		 return FALSE;
 	 if (!xdr_vector (xdrs, (char *)objp->ask, 140,
@@ -45,7 +110,8 @@ xdr_form (XDR *xdrs, form *objp)
 	 if (!xdr_vector (xdrs, (char *)objp->options, 140,
 		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
-	 if (!xdr_int (xdrs, &objp->answer))
+	 if (!xdr_vector (xdrs, (char *)objp->answer, 3,
+		sizeof (int), (xdrproc_t) xdr_int))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->next))
 		 return FALSE;

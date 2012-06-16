@@ -10,7 +10,29 @@
 #include <string.h>
 
 
+int answer[3];
 
+form *
+readQuestions(char * filename)
+{
+	form *ptr;
+	ptr = malloc(sizeof(form));
+
+	FILE *fr;
+	char * line = malloc(140);
+
+	fr = fopen (filename,"rt");
+
+	fgets(line,140,fr);
+	strcpy(ptr->ask,line);
+	
+	while(fgets(line,140,fr) != NULL)
+        {
+		strcat(ptr->options,line);
+        }
+
+	return ptr;
+}
 
 void
 progjogo_1(char *host)
@@ -59,17 +81,32 @@ progjogo_1(char *host)
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
 			}
-
+			
+			char filename[60];
 			switch(result_1->action)
 			{
 				case 1://se é coordenador
 					//seleciona as perguntas
+					while(i--)
+					{
+						printf("Digite o nome do arquivo que contem as perguntas");
+						scanf("%s",filename);
+						memcpy(&sendask_1_arg, readQuestions(filename), sizeof(form));
+						sendask_1_arg.next = i;
+						result_3 = sendask_1(&sendask_1_arg, clnt);
+
+						if (result_3 == (form *) NULL) {
+							clnt_perror (clnt, "call failed");
+						}
+					}
 					break;
 
 				case 2://se está recebendo questões
 					i=3;
 					while(i--)
 					{
+						sendask_1_arg.attr.booleanVar = 0;
+						sendask_1_arg.next = i;
 						result_3 = sendask_1(&sendask_1_arg, clnt);
 						if (result_3 == (form *) NULL) {
 							clnt_perror (clnt, "call failed");
@@ -79,17 +116,19 @@ progjogo_1(char *host)
 
 						printf("%s\n",result_3->options);
 
-						printf("Put the number of your answer\n");
-						scanf("%d",&sendanswer_1_arg.answer);
-						strcpy(sendanswer_1_arg.attr.address, host);
-						sendanswer_1_arg.attr.booleanVar = 0;
-
-						result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
-						if (result_4 == (form *) NULL) {
-							clnt_perror (clnt, "call failed");
-						}
+						printf("Put your answer\n");
+						scanf("%d",&answer[i]);
 
 					}
+					strcpy(sendanswer_1_arg.attr.address, host);
+					sendanswer_1_arg.attr.booleanVar = 0;
+
+
+					result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
+					if (result_4 == (form *) NULL) {
+						clnt_perror (clnt, "call failed");
+					}
+
 					break;
 
 				case 3://se esta recebendo resultados
@@ -131,5 +170,5 @@ main (int argc, char *argv[])
 	//}
 	//host = argv[1];
 	progjogo_1 (host);
-exit (0);
+	exit (0);
 }

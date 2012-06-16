@@ -30,7 +30,7 @@ struct form {
 	int ask_id;
 	char ask[140];
 	char options[140];
-	int answer;
+	int answer[3];
 	int next;
 	commomattributtes attr;
 };
@@ -43,9 +43,9 @@ struct infoperson {
 };
 typedef struct infoperson infoperson;
 
-extern int current_user;
 #define PROGJOGO 0x10232143
 #define VERJOGO 1
+
 #if defined(__STDC__) || defined(__cplusplus)
 #define whatdoto 1
 extern  control * whatdoto_1(control *, CLIENT *);
