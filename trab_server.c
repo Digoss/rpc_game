@@ -7,7 +7,7 @@
 int current_user, manager;
 
 struct user_ip{
-	char name[60];	
+	char name[60];
 	char ip[30];
 	int keepAlive;
 };
@@ -25,13 +25,23 @@ control *
 whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 {
 	static control  result;
-	if(has_ask)
+	if(current_user == manager)
 	{
-		result.attr.booleanVar = 1;
+		result.action = 1;
+	}
+	else if(has_ask)
+	{
+		//result.attr.booleanVar = 1;
+		result.action = 2;
+	}
+	else if(1)
+	{
+		result.action = 3;
 	}
 	else
 	{
-		result.attr.booleanVar = 0;
+		//result.attr.booleanVar = 0;
+		result.action = 0;
 	}
 
 	return &result;
@@ -90,3 +100,4 @@ nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 
 	return &result;
 }
+

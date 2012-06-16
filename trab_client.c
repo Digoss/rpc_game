@@ -45,15 +45,16 @@ progjogo_1(char *host)
 	//printf("Put your age!");
 	//scanf("%d",&nicetomeetyou_1_arg.age);
 
-	result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
-	if (result_5 == (infoperson *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	if(result_5->attr.booleanVar)
-	{
+	//result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
+	//if (result_5 == (infoperson *) NULL) {
+	//	clnt_perror (clnt, "call failed");
+	//}
+	//if(result_5->attr.booleanVar)
+	//{
+		
+		int i;
 		while(1)
 		{
-			int i;
 			result_1 = whatdoto_1(&whatdoto_1_arg, clnt);
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
@@ -91,19 +92,15 @@ progjogo_1(char *host)
 					}
 					break;
 
-				// case 3://se está enviando respostas
-
-				// 	result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
-				// 	if (result_4 == (form *) NULL) {
-				// 		clnt_perror (clnt, "call failed");
-				// 	}
-				// 	break;
+				case 3://se esta recebendo resultados
+					break;
 
 				default:
 					sleep(1);
 			}
 		}
-	}
+	//}
+
 	// result_2 = checkhost_1(&checkhost_1_arg, clnt);
 	// if (result_2 == (control *) NULL) {
 	// 	clnt_perror (clnt, "call failed");
@@ -128,10 +125,10 @@ main (int argc, char *argv[])
 {
 	char *host = "localhost";
 
-	if (argc < 2) {
+	//if (argc < 2) {
 		//printf ("usage: %s server_host\n", argv[0]);
 		//exit (1);
-	}
+	//}
 	//host = argv[1];
 	progjogo_1 (host);
 exit (0);
