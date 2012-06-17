@@ -128,12 +128,12 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 	}
 	else// quando recebe mensagem originada por um cliente
 	{
+		char *host;
 		int i;
 		for(i=0;i<10;i++)
 		{
 			if(i == current_user) //quando e o processo de maior prioridade
 			{
-				char *host;
 				strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
 				for(i=0;i<0;i++)
 				{	
@@ -156,6 +156,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 			}
 			else if(i != current_user)// procura o processo de maior prioridade e envia mensagem
 			{
+				host = list[i].ip;
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
 					continue;
