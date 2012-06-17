@@ -15,6 +15,8 @@ int answer[3];
 form *
 readQuestions(char * filename)
 {
+	int i;
+
 	form *ptr;
 	ptr = malloc(sizeof(form));
 
@@ -25,10 +27,13 @@ readQuestions(char * filename)
 
 	fgets(line,140,fr);
 	strcpy(ptr->ask,line);
-	
+	i = 0;	
 	while(fgets(line,140,fr) != NULL)
         {
+		if(line[0] == 'x')	
+			ptr->answer[0] = i;
 		strcat(ptr->options,line);
+		i++;
         }
 
 	return ptr;
@@ -87,6 +92,7 @@ progjogo_1(char *host)
 			{
 				case 1://se é coordenador
 					//seleciona as perguntas
+					i=3;
 					while(i--)
 					{
 						printf("Digite o nome do arquivo que contem as perguntas");
@@ -170,5 +176,6 @@ main (int argc, char *argv[])
 	//}
 	//host = argv[1];
 	progjogo_1 (host);
+//	readQuestions("teste.txt");
 	exit (0);
 }

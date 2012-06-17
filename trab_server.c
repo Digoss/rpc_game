@@ -3,22 +3,26 @@
 #include "trab_clnt.c"
 #include <string.h>
 
-int has_ask = 0;
+int has_ask = 0; //para servidor nao coordenador
 
-form ask[3];
+form ask[3]; //perguntas enviadas pelo coordenador
 
-form answer[10];
+form answer[10]; //respostas dadas ao coordenador
+
+int responses[3]; //respostas das perguntas, guardada pelo coordenador
 
 int current_user, manager;
+
+
 
 struct user_ip{
 	char name[60];
 	char ip[40];
+	int points;
 	int keepAlive;
 };
 
-struct user_ip list[10];
-
+struct user_ip list[10]; //lista de ips
 
 int
 find_by_address(commomattributtes attr)
@@ -83,6 +87,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 		form  sendask_1_arg;
 
 		memcpy(&sendask_1_arg, argp, sizeof(form));
+		responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
 
 		int i;
 		for(i=0;i<10;i++)
@@ -102,6 +107,8 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 				if (result_3 == (form *) NULL) {
 					clnt_perror (clnt, "call failed");
 				}
+
+				list[i].keepAlive = 1;
 				//manter um array com os participantes que receberao a pergunta
 				///ainda necessita dos tratamentos de erro
 			}
