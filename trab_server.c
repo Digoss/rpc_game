@@ -11,18 +11,44 @@ form answer[10]; //respostas dadas ao coordenador
 
 int responses[3]; //respostas das perguntas, guardada pelo coordenador
 
-int current_user, manager;
-
-
+int current_user;
+int manager = -1;
 
 struct user_ip{
 	char name[60];
+	int age;
 	char ip[40];
 	int points;
 	int keepAlive;
 };
 
 struct user_ip list[10]; //lista de ips
+
+int
+readPlayers()
+{
+	int index;
+	FILE *fr;
+        char * line = malloc(140);
+
+        fr = fopen ("players.txt","rt");
+	index = 0;
+        while(fgets(line,60,fr) != NULL)
+        {
+		strcpy(list[index].name, line);
+		if(fgets(line,5,fr) != NULL)
+		{
+			list[index].age =  atoi(line);
+			if(fgets(line,40,fr) != NULL)
+			{
+				strcpy(list[index].ip, line);
+			}
+		}
+                index++;
+        }
+	return 0;
+}
+
 
 int
 find_by_address(commomattributtes attr)
@@ -46,7 +72,7 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 	{
 		result.action = 1;
 	}
-	else if(has_ask)
+	else if(has_ask == 3)
 	{
 		//result.attr.booleanVar = 1;
 		result.action = 2;
@@ -68,7 +94,81 @@ control *
 checkhost_1_svc(control *argp, struct svc_req *rqstp)
 {
 	static control  result;
+	CLIENT *clnt;
 
+	control  *result_2;
+        control  checkhost_1_arg;
+	
+	if(argp->action == 100) //outro servidor avisa que processo corrente e o de maior prioridade vivo achado por ele
+	{
+		int i;
+		char *host;
+		strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
+		for(i=0;i<0;i++)
+		{	
+			if(i != current_user)
+			{
+				host = list[i].ip;
+				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+                               	if (clnt == NULL) {
+                               		 continue;
+                       		}
+				checkhost_1_arg.attr.booleanVar = 1;
+				result_2 = checkhost_1(&checkhost_1_arg, clnt);
+		        	if (result_2 == (control *) NULL) {
+					continue;
+        			}
+				//enviar mensagem avisando que agora o processo corrente e o coordenador
+			}
+		}
+	}
+	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
+	{
+		manager = find_by_address(argp->attr);
+	}
+	else// quando recebe mensagem originada por um cliente
+	{
+		int i;
+		for(i=0;i<10;i++)
+		{
+			if(i == current_user) //quando e o processo de maior prioridade
+			{
+				char *host;
+				strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
+				for(i=0;i<0;i++)
+				{	
+					if(i != current_user)
+					{
+						host = list[i].ip;
+						clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+	                                	if (clnt == NULL) {
+       	                                		 continue;
+       	                        		}
+						checkhost_1_arg.attr.booleanVar = 1;
+						result_2 = checkhost_1(&checkhost_1_arg, clnt);
+				        	if (result_2 == (control *) NULL) {
+							continue;
+		        			}
+						//enviar mensagem avisando que agora o processo corrente e o coordenador
+					}
+				}
+				break;
+			}
+			else if(i != current_user)// procura o processo de maior prioridade e envia mensagem
+			{
+				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+				if (clnt == NULL) {
+					continue;
+		        	}
+				checkhost_1_arg.action = 100; //avisa ao host destino que e o coordenador
+				result_2 = checkhost_1(&checkhost_1_arg, clnt);
+		        	if (result_2 == (control *) NULL) {
+					continue;
+		        	}
+				break;
+			}
+		}
+	}
 
 	return &result;
 }
@@ -88,13 +188,13 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 
 		memcpy(&sendask_1_arg, argp, sizeof(form));
 		responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
-
+		char *host;
 		int i;
 		for(i=0;i<10;i++)
 		{
 			if(current_user != i)
 			{
-				char *host = list[i].ip;
+				host = list[i].ip;
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
 					clnt_pcreateerror (host);
@@ -117,7 +217,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 	if(argp->attr.booleanVar)
 	{
 		memcpy(&ask[argp->next],argp,sizeof(form));//caso eu esteja recebendo uma questao do grandao
-		has_ask = 1;
+		has_ask++; 
 	}
 	else
 	{

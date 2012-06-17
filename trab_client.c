@@ -47,8 +47,8 @@ progjogo_1(char *host)
 	control  *result_1;
 	control  whatdoto_1_arg;
 
-	//control  *result_2;
-	//control  checkhost_1_arg;
+	control  *result_2;
+	control  checkhost_1_arg;
 
 	form  *result_3;
 	form  sendask_1_arg;
@@ -78,6 +78,11 @@ progjogo_1(char *host)
 	//}
 	//if(result_5->attr.booleanVar)
 	//{
+	checkhost_1_arg.attr.booleanVar = 0;
+	result_2 = checkhost_1(&checkhost_1_arg, clnt);
+	if (result_2 == (control *) NULL) {
+		clnt_perror (clnt, "call failed");
+	} 
 		
 		int i;
 		while(1)
