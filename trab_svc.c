@@ -88,6 +88,13 @@ progjogo_1(struct svc_req *rqstp, register SVCXPRT *transp)
 int
 main (int argc, char **argv)
 {
+	if(argc < 2)
+	{
+		printf("Faltou informar o usuario corrente");
+		exit(0);
+	}
+	current_user = atoi(argv[1]);
+
 	register SVCXPRT *transp;
 
 	pmap_unset (PROGJOGO, VERJOGO);

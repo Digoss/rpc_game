@@ -2,7 +2,11 @@
 #include "trab_clnt.c"
 #include <string.h>
 
+int gamestarted = 1;
+
 int has_ask = 0; //verifica se o servidor ja recebeu as 3 perguntas do coordenador
+
+int questions_answered = 0; //verifica quantas perguntas o player ja respondeu
 
 form ask[3]; //perguntas enviadas pelo coordenador
 
@@ -22,6 +26,8 @@ int manager = -1; //coordenador do jogo
 
 int has_new_player; //verifica se existem novos players na partida
 
+int finished; //verifica quando player ja respondeu e recebeu a confimacao com sucesso
+
 struct user_ip{
 	char name[60];
 	int age;
@@ -31,6 +37,38 @@ struct user_ip{
 };
 
 struct user_ip list[10]; //lista de ips
+
+int
+clear_all()
+{
+	//gamestarted = 1;
+
+	has_ask = 0; //verifica se o servidor ja recebeu as 3 perguntas do coordenador
+
+	questions_answered = 0; //verifica quantas perguntas o player ja respondeu
+
+	//form ask[3]; //perguntas enviadas pelo coordenador
+
+	//form answer[10]; //respostas dadas ao coordenador
+
+	int i;
+	for(i=0;i<10;i++)
+		count_answer[i] = 0; //marcador dos players que respoderao
+
+	//int responses[3]; //respostas das perguntas, guardada pelo coordenador
+
+	//reset = 0; //quando player detecta que coordenador nao esta mais ativo
+
+	was_send = 0; //quando coordenador enviou pelo menos uma mensagem
+
+	//int current_user; //usuario atual do host
+
+	//int manager = -1; //coordenador do jogo
+
+	has_new_player = 0; //verifica se existem novos players na partida
+
+	finished = 0;
+}
 
 int
 readPlayers()
@@ -92,25 +130,26 @@ control *
 whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 {
 	static control  result;
-	if(reset)
+	if(reset) //se host atual detectou que coordenador caiu
 	{
+		clear_all();
 		result.action = 100;
 		reset = 0;
 	}
-	else if((current_user == manager && was_send == 0) || has_new_player)
-	{
+	else if((current_user == manager && was_send == 0) || has_new_player) //envia perguntas caso seja coordenador e nao envio as perguntas
+	{									// ou se existe um novo usuario
 		result.action = 1;
 		has_new_player = 0;
 	}
-	else if(has_ask == 3)
+	else if(has_ask == 3 && questions_answered < 3) // requisita resposta quando tem as perguntas e nao forao todas respondidas
 	{
-		//result.attr.booleanVar = 1;
 		result.action = 2;
 	}
-	//else if(1)
-	//{
-	//	result.action = 3;
-	//}
+	else if(questions_answered == 3 && finished == 0) // requita fim de jogo
+	{
+		finished = 1;
+		result.action = 3;
+	}
 	else
 	{
 		//result.attr.booleanVar = 0;
@@ -122,7 +161,14 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 
 control *
 checkhost_1_svc(control *argp, struct svc_req *rqstp)
-{
+{	
+
+	if(gamestarted)
+	{
+		readPlayers();
+		gamestarted = 0;
+		printf("Nome: %sIdade: %d\nIP: %s",list[current_user].name,list[current_user].age,list[current_user].ip);
+	}
 	static control  result;
 	CLIENT *clnt;
 
@@ -157,6 +203,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
 	{
 		manager = find_by_address(argp->attr);
+		clear_all();
 	}
 	else// quando recebe mensagem originada por um cliente
 	{

@@ -110,18 +110,22 @@ progjogo_1(char *host)
 
 				case 1://se é coordenador
 					//seleciona as perguntas
-					
+					if(has_questions == 0)
+					{
+						printf("Parabens voce foi escolhido como coordenador!!!\n");
+						printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
+					}
 					i=3;
 					while(i--)
 					{
+						
 						if(has_questions)
 						{
 							memcpy(&sendask_1_arg, &questions[i], sizeof(form));
 						}
 						else
 						{
-							printf("Parabens voce foi escolhido como coordenador!!!\n");
-							printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
+							
 							scanf("%s",filename);
 							memcpy(&sendask_1_arg, readQuestions(filename), sizeof(form));
 							memcpy(&questions[i], &sendask_1_arg,sizeof(form));
@@ -171,6 +175,8 @@ progjogo_1(char *host)
 					break;
 
 				case 3://se esta recebendo resultados
+					printf("Obrigado por ter participado\n");
+					printf("Dirija-se ate o coordenador para obter os resultados");
 					break;
 				case 4:
 					result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);

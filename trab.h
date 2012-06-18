@@ -46,6 +46,8 @@ typedef struct infoperson infoperson;
 #define PROGJOGO 0x10232143
 #define VERJOGO 1
 
+
+extern current_user;
 #if defined(__STDC__) || defined(__cplusplus)
 #define whatdoto 1
 extern  control * whatdoto_1(control *, CLIENT *);
