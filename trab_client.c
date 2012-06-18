@@ -99,7 +99,7 @@ progjogo_1(char *host)
 			switch(result_1->action)
 			{
 				case 100:
-					checkhost_1_arg.acton = 1;
+					checkhost_1_arg.action = 1;
 					checkhost_1_arg.attr.booleanVar = 0;
 					result_2 = checkhost_1(&checkhost_1_arg, clnt);
 					if (result_2 == (control *) NULL) {
@@ -127,11 +127,14 @@ progjogo_1(char *host)
 							memcpy(&questions[i], &sendask_1_arg,sizeof(form));
 						}
 						sendask_1_arg.next = i;
-
-						result_3 = sendask_1(&sendask_1_arg, clnt);
-						if (result_3 == (form *) NULL) {
-							clnt_perror (clnt, "call failed");
+						do
+						{
+							result_3 = sendask_1(&sendask_1_arg, clnt);
+							//if (result_3 == (form *) NULL) {
+							//	clnt_perror (clnt, "call failed");
+							//}
 						}
+						while(result_3 == (form *) NULL);
 					}
 					has_questions = 1;
 					

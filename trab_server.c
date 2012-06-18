@@ -1,4 +1,3 @@
-
 #include "trab.h"
 #include "trab_clnt.c"
 #include <string.h>
@@ -70,6 +69,22 @@ find_by_address(commomattributtes attr)
 	return -1;
 }
 
+int
+check_end()
+{
+	int all_returned = 1;
+	int i;
+	for(i=0;i<10;i++) //verifica se todos os que receberam a pergunta ja a responderam
+		if(list[i].keepAlive)
+			if(count_answer[i] == 0)
+				all_returned = 0;
+	if(all_returned)
+	{
+		//fim de jogo
+	}
+	return 1;
+}
+
 //fazer parse de um arquivo que contenha o endereco ip dos hosts
 
 
@@ -92,10 +107,10 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 		//result.attr.booleanVar = 1;
 		result.action = 2;
 	}
-	else if(1)
-	{
-		result.action = 3;
-	}
+	//else if(1)
+	//{
+	//	result.action = 3;
+	//}
 	else
 	{
 		//result.attr.booleanVar = 0;
@@ -260,20 +275,8 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 			int formsize = sizeof(form);
 			memcpy(answer+index*formsize, argp, formsize);
 			count_answer[index] = 1;
-			int all_returned = 1;
-			int i;
-			for(i=0;i<10;i++) //verifica se todos os que receberam a pergunta ja a responderam
-				if(list[i].keep_Alive)
-					if(count_answer[i] == 0)
-						all_returned = 0;
-
-			if(all_returned)
-			{
-				//fim de jogo
-			}
+			check_end();
 		}
-		//caso eu seja o grandao
-		//chamar metodo para tratar informacoes
 	}
 	else //se processo corrente recebe resposta do cliente, a envia para o coordenador
 	{
@@ -289,13 +292,10 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 		clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 		if (clnt == NULL) {
 			reset = 1;
-			//clnt_pcreateerror (host);
-			//exit (1);
 		}
-		strcpy(sendanswer_1_arg.attr.address, &list[current].ip);
+		strcpy(sendanswer_1_arg.attr.address, list[current_user].ip);
 		result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
 		if (result_4 == (form *) NULL) {
-		 	//clnt_perror (clnt, "call failed");
 			reset = 1;
 		}
 		//manda pro grandao
@@ -308,25 +308,33 @@ infoperson *
 nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 {
 	static infoperson  result;
-
-	CLIENT *clnt;
-	infoperson  *result_5;
-        infoperson  nicetomeetyou_1_arg;
-
-	char *host;
-	int i;
-	for(i=0;i<10;i++)
+	if(argp->attr.booleanVar != 1)
 	{
-		if(current_user != i)
+		CLIENT *clnt;
+		infoperson  *result_5;
+		 infoperson  nicetomeetyou_1_arg;
+	
+		char *host;
+		int i;
+		nicetomeetyou_1_arg.attr.booleanVar = 1;
+		for(i=0;i<10;i++)
 		{
-			host = list[i].ip;
-			clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
-			if (clnt == NULL) {
-				list[i].keepAlive = 0;
-			result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
-                        if (result_5 == (infoperson *) NULL) {
-				list[i].keepAlive = 0;
-                        }
+			if(current_user != i)
+			{
+				host = list[i].ip;
+	
+				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+				if (clnt == NULL) {
+					list[i].keepAlive = 0;
+					check_end();	
+				}
+
+				result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
+                        	if (result_5 == (infoperson *) NULL) {
+					list[i].keepAlive = 0;
+					check_end();
+				}
+			}
 		}
 	}
 	return &result;
