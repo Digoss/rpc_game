@@ -1,9 +1,8 @@
-//verificar se um host caiu.
-	//se foi um coordenador
-	//se foi um jogador
+Identificar quando player caiu
+ - tratar essa situacao para finalizar partida
 
-//executar bully algorithm
+Enviar perguntas para player apos entrarem
 
-//enviar perguntas
+Verificar resultados e finalizar partida
 
-//receber perguntas
+

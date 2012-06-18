@@ -9,10 +9,17 @@ form ask[3]; //perguntas enviadas pelo coordenador
 
 form answer[10]; //respostas dadas ao coordenador
 
+int count_answer[10]; //marcador dos players que respoderao
+
 int responses[3]; //respostas das perguntas, guardada pelo coordenador
 
-int current_user;
-int manager = -1;
+int reset; //quando player detecta que coordenador nao esta mais ativo
+
+int was_send; //quando coordenador enviou pelo menos uma mensagem
+
+int current_user; //usuario atual do host
+
+int manager = -1; //coordenador do jogo
 
 struct user_ip{
 	char name[60];
@@ -58,7 +65,7 @@ find_by_address(commomattributtes attr)
 		if(strcmp(attr.address,list[i].ip)==0)
 			return i;
 	printf("Endereco nao encontrado\n");
-	exit(0);
+	return -1;
 }
 
 //fazer parse de um arquivo que contenha o endereco ip dos hosts
@@ -68,7 +75,12 @@ control *
 whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 {
 	static control  result;
-	if(current_user == manager)
+	if(reset)
+	{
+		result.action = 100;
+		reset = 0;
+	}
+	else if(current_user == manager)
 	{
 		result.action = 1;
 	}
@@ -121,6 +133,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 				//enviar mensagem avisando que agora o processo corrente e o coordenador
 			}
 		}
+		manager = current_user;
 	}
 	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
 	{
@@ -132,7 +145,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		int i;
 		for(i=0;i<10;i++)
 		{
-			if(i == current_user) //quando e o processo de maior prioridade
+			if(i == current_user) //quando processo corrente e o de maior prioridade
 			{
 				strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
 				for(i=0;i<0;i++)
@@ -152,6 +165,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 						//enviar mensagem avisando que agora o processo corrente e o coordenador
 					}
 				}
+				manager = current_user;
 				break;
 			}
 			else if(i != current_user)// procura o processo de maior prioridade e envia mensagem
@@ -179,8 +193,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 {
 	static form  result;
 
-	//if eu sou  o grandao
-	if(current_user == manager)
+	if(current_user == manager) // se processo corrente e o coordenador
 	{
 		
 		CLIENT *clnt;
@@ -198,7 +211,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 				host = list[i].ip;
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
-					clnt_pcreateerror (host);
+					//clnt_pcreateerror (host);
 					//exit (1);
 					continue;
 				}
@@ -206,9 +219,10 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 				sendask_1_arg.attr.booleanVar = 1;
 				result_3 = sendask_1(&sendask_1_arg, clnt);
 				if (result_3 == (form *) NULL) {
-					clnt_perror (clnt, "call failed");
+					//clnt_perror (clnt, "call failed");
+					continue;
 				}
-
+				was_send = 1;
 				list[i].keepAlive = 1;
 				//manter um array com os participantes que receberao a pergunta
 				///ainda necessita dos tratamentos de erro
@@ -233,17 +247,31 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 {
 	static form  result;
 
-	//if(argp->attr.booleanVar)
-	if(current_user == manager)
+	
+	if(current_user == manager) //se processo corrente e o coordenador recebendo respostas
 	{
-		int index = find_by_address(argp->attr);
-		int formsize = sizeof(form);
-		memcpy(answer+index*formsize, argp, formsize);
+		if(find_by_address(argp->attr) >= 0)
+		{
+			int index = find_by_address(argp->attr);
+			int formsize = sizeof(form);
+			memcpy(answer+index*formsize, argp, formsize);
+			count_answer[index] = 1;
+			int all_returned = 1;
+			int i;
+			for(i=0;i<10;i++)
+				if(list[i].keep_Alive)
+					if(count_answer[i] == 0)
+						all_returned = 0;
+
+			if(all_returned)
+			{
+				//fim de jogo
+			}
+		}
 		//caso eu seja o grandao
 		//chamar metodo para tratar informacoes
 	}
-	//manda pro chefao
-	else
+	else //se processo corrente recebe resposta do cliente, a envia para o coordenador
 	{
 		memcpy(&answer[current_user],argp,sizeof(form));
 
@@ -256,15 +284,18 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 		char *host = list[manager].ip;
 		clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 		if (clnt == NULL) {
-			clnt_pcreateerror (host);
-			exit (1);
+			reset = 1;
+			//clnt_pcreateerror (host);
+			//exit (1);
 		}
+		strcpy(sendanswer_1_arg.attr.address, &list[current].ip);
 		result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
 		if (result_4 == (form *) NULL) {
-		 	clnt_perror (clnt, "call failed");
+		 	//clnt_perror (clnt, "call failed");
+			reset = 1;
 		}
 		//manda pro grandao
-		//falta tratamento caso ele esteja morto
+		//falta tratamento caso o coordenador esteja morto
 	}
 	return &result;
 }

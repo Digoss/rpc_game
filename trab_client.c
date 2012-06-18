@@ -11,6 +11,8 @@
 
 
 int answer[3];
+form questions[3];
+int has_questions;
 
 form *
 readQuestions(char * filename)
@@ -78,6 +80,7 @@ progjogo_1(char *host)
 	//}
 	//if(result_5->attr.booleanVar)
 	//{
+	checkhost_1_arg.action = 0;
 	checkhost_1_arg.attr.booleanVar = 0;
 	result_2 = checkhost_1(&checkhost_1_arg, clnt);
 	if (result_2 == (control *) NULL) {
@@ -95,21 +98,43 @@ progjogo_1(char *host)
 			char filename[60];
 			switch(result_1->action)
 			{
+				case 100:
+					checkhost_1_arg.acton = 1;
+					checkhost_1_arg.attr.booleanVar = 0;
+					result_2 = checkhost_1(&checkhost_1_arg, clnt);
+					if (result_2 == (control *) NULL) {
+						clnt_perror (clnt, "call failed");
+					}
+					printf("Desculpe o jogo foi re-iniciado!!!\n");
+					break;
+
 				case 1://se é coordenador
 					//seleciona as perguntas
+					
 					i=3;
 					while(i--)
 					{
-						printf("Digite o nome do arquivo que contem as perguntas");
-						scanf("%s",filename);
-						memcpy(&sendask_1_arg, readQuestions(filename), sizeof(form));
+						if(has_questions)
+						{
+							memcpy(&sendask_1_arg, &questions[i], sizeof(form));
+						}
+						else
+						{
+							printf("Parabens voce foi escolhido como coordenador!!!\n");
+							printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
+							scanf("%s",filename);
+							memcpy(&sendask_1_arg, readQuestions(filename), sizeof(form));
+							memcpy(&questions[i], &sendask_1_arg,sizeof(form));
+						}
 						sendask_1_arg.next = i;
-						result_3 = sendask_1(&sendask_1_arg, clnt);
 
+						result_3 = sendask_1(&sendask_1_arg, clnt);
 						if (result_3 == (form *) NULL) {
 							clnt_perror (clnt, "call failed");
 						}
 					}
+					has_questions = 1;
+					
 					break;
 
 				case 2://se está recebendo questões
