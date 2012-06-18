@@ -169,7 +169,12 @@ progjogo_1(char *host)
 
 				case 3://se esta recebendo resultados
 					break;
-
+				case 4:
+					result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
+					if (result_5 == (infoperson *) NULL) {
+						//clnt_perror (clnt, "call failed");
+					}
+					break;
 				default:
 					sleep(1);
 			}

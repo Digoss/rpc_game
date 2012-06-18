@@ -3,7 +3,7 @@
 #include "trab_clnt.c"
 #include <string.h>
 
-int has_ask = 0; //para servidor nao coordenador
+int has_ask = 0; //verifica se o servidor ja recebeu as 3 perguntas do coordenador
 
 form ask[3]; //perguntas enviadas pelo coordenador
 
@@ -20,6 +20,8 @@ int was_send; //quando coordenador enviou pelo menos uma mensagem
 int current_user; //usuario atual do host
 
 int manager = -1; //coordenador do jogo
+
+int has_new_player; //verifica se existem novos players na partida
 
 struct user_ip{
 	char name[60];
@@ -80,9 +82,10 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 		result.action = 100;
 		reset = 0;
 	}
-	else if(current_user == manager)
+	else if((current_user == manager && was_send == 0) || has_new_player)
 	{
 		result.action = 1;
+		has_new_player = 0;
 	}
 	else if(has_ask == 3)
 	{
@@ -133,6 +136,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 				//enviar mensagem avisando que agora o processo corrente e o coordenador
 			}
 		}
+		has_new_player = 1;
 		manager = current_user;
 	}
 	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
@@ -258,7 +262,7 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 			count_answer[index] = 1;
 			int all_returned = 1;
 			int i;
-			for(i=0;i<10;i++)
+			for(i=0;i<10;i++) //verifica se todos os que receberam a pergunta ja a responderam
 				if(list[i].keep_Alive)
 					if(count_answer[i] == 0)
 						all_returned = 0;
@@ -305,8 +309,26 @@ nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 {
 	static infoperson  result;
 
-	printf("%d\n",current_user);
+	CLIENT *clnt;
+	infoperson  *result_5;
+        infoperson  nicetomeetyou_1_arg;
 
+	char *host;
+	int i;
+	for(i=0;i<10;i++)
+	{
+		if(current_user != i)
+		{
+			host = list[i].ip;
+			clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
+			if (clnt == NULL) {
+				list[i].keepAlive = 0;
+			result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
+                        if (result_5 == (infoperson *) NULL) {
+				list[i].keepAlive = 0;
+                        }
+		}
+	}
 	return &result;
 }
 
