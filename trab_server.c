@@ -115,6 +115,7 @@ bubble_sort_game()
 {
 	//verificar se existe players nao marcados
 	//champions
+	int max;
 	int i,j;
 	for(i=0;i<10;i++)
 	{
@@ -155,7 +156,7 @@ check_end()
 				all_returned = 0;
 	if(all_returned)
 	{
-		for(i=0,i<10;i++)
+		for(i=0;i<10;i++)
 		{
 			plus_point(i);
 		}
@@ -186,7 +187,7 @@ plus_point(int index)
 	int i;
 	for(i=0;i<3;i++)
 	{
-		if(reponses[i] == answer[index].answer[i])
+		if(responses[i] == answer[index].answer[i])
 		{
 			list[index].points = 1 + list[index].points;
 		}
@@ -220,7 +221,7 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 		finished = 1;
 		result.action = 3;
 	}
-	else if(current_user == manger)
+	else if(current_user == manager)
 	{
 		result.action = 4;
 	}
@@ -274,8 +275,9 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		manager = current_user;
 	}
 	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
-	{
+	{	
 		manager = find_by_address(argp->attr);
+		printf("Recebi msg de %d",manager);
 		clear_all();
 	}
 	else// quando recebe mensagem originada por um cliente
