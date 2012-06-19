@@ -79,6 +79,8 @@ readPlayers()
 	int index;
 	FILE *fr;
         char * line = malloc(140);
+	int size_ip;
+	int i = 0;
 
         fr = fopen ("players.txt","rt");
 	index = 0;
@@ -91,6 +93,8 @@ readPlayers()
 			if(fgets(line,40,fr) != NULL)
 			{
 				strcpy(list[index].ip, line);
+				size_ip = strlen(list[index].ip);
+				list[index].ip[size_ip] = '\0';
 			}
 		}
                 index++;
