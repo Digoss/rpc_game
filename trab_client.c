@@ -13,7 +13,7 @@
 int answer[3];
 form questions[3];
 int has_questions;
-
+int sou_coord = 0;
 form *
 readQuestions(char * filename)
 {
@@ -112,6 +112,7 @@ progjogo_1(char *host)
 
 				case 1://se é coordenador
 					//seleciona as perguntas
+					sou_coord = 1;
 					if(has_questions == 0)
 					{
 						printf("Parabens voce foi escolhido como coordenador!!!\n");
@@ -145,6 +146,11 @@ progjogo_1(char *host)
 					break;
 
 				case 2://se está recebendo questões
+					if(sou_coord == 1)
+					{
+						printf("Desculpe o jogo foi resetado, vc nao e mais o coordenador\n");
+						sou_coord = 0;
+					}
 					i=3;
 					while(i--)
 					{
