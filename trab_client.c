@@ -119,14 +119,13 @@ progjogo_1(char *host)
 					i=3;
 					while(i--)
 					{	
-						printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
 						if(has_questions)
 						{
 							memcpy(&sendask_1_arg, &questions[i], sizeof(form));
 						}
 						else
-						{
-							
+						{		
+							printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
 							scanf("%s",filename);
 							memcpy(&sendask_1_arg, readQuestions(filename), sizeof(form));
 							memcpy(&questions[i], &sendask_1_arg,sizeof(form));

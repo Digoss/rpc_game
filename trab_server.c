@@ -336,6 +336,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 					continue;
 		        	}
 				printf("%s sera o novo coordenador\n",host);
+				manager = i;
 				break;
 			}
 		}
@@ -416,6 +417,7 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 	}
 	else //se processo corrente recebe resposta do cliente, a envia para o coordenador
 	{
+		printf("Estou aqui\n");
 		memcpy(&answer[current_user],argp,sizeof(form));
 
 		CLIENT *clnt;
@@ -425,6 +427,7 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 		memcpy(&sendanswer_1_arg, &answer[current_user], sizeof(form));
 
 		char *host = list[manager].ip;
+		printf("host: %s usuario numero: %d\n",host,manager);
 		clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 		if (clnt == NULL) {
 			reset = 1;
