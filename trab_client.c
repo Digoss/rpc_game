@@ -167,11 +167,14 @@ progjogo_1(char *host)
 
 						printf("Put your answer\n");
 						scanf("%d",&answer[i]);
+						
 
 					}
+					sendanswer_1_arg.answer[0] = answer[0];
+					sendanswer_1_arg.answer[1] = answer[1];
+					sendanswer_1_arg.answer[2] = answer[2];
 					strcpy(sendanswer_1_arg.attr.address, host);
 					sendanswer_1_arg.attr.booleanVar = 0;
-
 
 					result_4 = sendanswer_1(&sendanswer_1_arg, clnt);
 					if (result_4 == (form *) NULL) {

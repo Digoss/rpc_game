@@ -166,38 +166,38 @@ check_end()
 			printf("Fez o plus");
 			plus_point(i);
 		}
-		bubble_sort_game();
-		printf("Vencedores\n\n");
+		//bubble_sort_game();
 		//dar print do coordenador
-		for(i=0;i<5;i++)
+		for(i=0;i<10;i++)
 		{
-			printf("Nome: %s",list[champions[i]].name);
-			printf("Idade: %d",list[champions[i]].age);
-			printf("Pontos: %d\n",list[champions[i]].points);
+			printf("Nome: %s",list[i].name);
+			printf("Idade: %d\n",list[i].age);
+			printf("Pontos: %d\n",list[i].points);
 		}
-		printf("Nao classificados\n\n");
-		for(;i<10;i++)
+	/*	for(;i<10;i++)
 		{
-			printf("Nome: %s",list[champions[i]].name);
-			printf("Idade: %d",list[champions[i]].age);
-			printf("Pontos: %d",list[champions[i]].points);
-		}
+			printf("Nome: %s",list[i].name);
+			printf("Idade: %d\n",list[i].age);
+			printf("Pontos: %d\n",list[i].points);
+		}*/
 		//fim de jogo
+		exit(0);
 	}
-	exit(0);
 	return 1;
 }
 
 int
 plus_point(int index)
 {
+	printf("O endereco da soma e: %d\n",index);
 	int i;
 	for(i=0;i<3;i++)
 	{
-		if(responses[i] == answer[index].answer[i])
-		{
-			list[index].points = 1 + list[index].points;
-		}
+		if(current_user != manager)
+			if(responses[i] == answer[index].answer[i])
+			{
+				list[index].points = 1 + list[index].points;
+			}
 	}
 }
 
@@ -350,6 +350,9 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 form *
 sendask_1_svc(form *argp, struct svc_req *rqstp)
 {
+	responses[0] = 1;
+	responses[1] = 1;
+	responses[2] = 1;
 	static form  result;
 
 	if(current_user == manager) // se processo corrente e o coordenador
@@ -360,7 +363,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 		form  sendask_1_arg;
 
 		memcpy(&sendask_1_arg, argp, sizeof(form));
-		responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
+		//responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
 		char *host;
 		int i;
 		for(i=0;i<10;i++)
@@ -411,11 +414,17 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 		printf("Coordenador recebeu respostas de %s\n", argp->attr.address);
 		if(find_by_address(argp->attr) >= 0)
 		{
+			printf("1\n");
 			int index = find_by_address(argp->attr);
+			printf("2\n");
 			int formsize = sizeof(form);
+			printf("3\n");
 			memcpy(&answer[index], argp, formsize);
+			printf("4\n");
 			count_answer[index] = 1;
+			printf("5\n");
 			check_end();
+			printf("6\n");
 		}
 	}
 	else //se processo corrente recebe resposta do cliente, a envia para o coordenador
