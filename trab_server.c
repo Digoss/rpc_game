@@ -166,22 +166,13 @@ check_end()
 			printf("Fez o plus");
 			plus_point(i);
 		}
-		//bubble_sort_game();
-		//dar print do coordenador
 		for(i=0;i<10;i++)
 		{
 			printf("Nome: %s",list[i].name);
 			printf("Idade: %d\n",list[i].age);
 			printf("Pontos: %d\n",list[i].points);
 		}
-	/*	for(;i<10;i++)
-		{
-			printf("Nome: %s",list[i].name);
-			printf("Idade: %d\n",list[i].age);
-			printf("Pontos: %d\n",list[i].points);
-		}*/
 		//fim de jogo
-		exit(0);
 	}
 	return 1;
 }
@@ -193,7 +184,7 @@ plus_point(int index)
 	int i;
 	for(i=0;i<3;i++)
 	{
-		if(current_user != manager)
+		if(i != manager)
 			if(responses[i] == answer[index].answer[i])
 			{
 				list[index].points = 1 + list[index].points;
@@ -363,7 +354,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 		form  sendask_1_arg;
 
 		memcpy(&sendask_1_arg, argp, sizeof(form));
-		//responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
+		responses[sendask_1_arg.next] = sendask_1_arg.answer[0];//armazena a resposta
 		char *host;
 		int i;
 		for(i=0;i<10;i++)
