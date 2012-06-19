@@ -94,7 +94,8 @@ readPlayers()
 			{
 				strcpy(list[index].ip, line);
 				size_ip = strlen(list[index].ip);
-				list[index].ip[size_ip] = '\0';
+				list[index].ip[size_ip-1] = '\0';
+				printf("string %s", list[index].ip);
 			}
 		}
                 index++;
