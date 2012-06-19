@@ -226,10 +226,10 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 		finished = 1;
 		result.action = 3;
 	}
-	else if(current_user == manager)
-	{
-		result.action = 4;
-	}
+	//else if(current_user == manager)
+	//{
+	//	result.action = 4;
+	//}
 	else
 	{
 		result.action = 0;
@@ -328,13 +328,11 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 				printf("Verificando que %s esta vivo para ser o novo coordenador\n",host);
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
-					printf("oi");
 					continue;
 		        	}
 				checkhost_1_arg.action = 100; //avisa ao host destino que e o coordenador
 				result_2 = checkhost_1(&checkhost_1_arg, clnt);
 		        	if (result_2 == (control *) NULL) {
-					printf("tchau");
 					continue;
 		        	}
 				printf("%s sera o novo coordenador\n",host);
@@ -448,6 +446,7 @@ nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 	static infoperson  result;
 	if(argp->attr.booleanVar != 1)
 	{
+		printf("Verificando se hosts estao vivos");
 		CLIENT *clnt;
 		infoperson  *result_5;
 		 infoperson  nicetomeetyou_1_arg;
