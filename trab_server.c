@@ -282,7 +282,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		has_new_player = 1;
 		manager = current_user;
 	}
-	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
+	else if(argp->attr.booleanVar == 1)//quando recebe aviso do novo coordenador 
 	{	
 		manager = find_by_address(argp->attr);
 		printf("Recebi msg de %d, dizendo que ele e o novo coordenador\n",manager);
@@ -300,7 +300,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 				manager = current_user;
 				printf("Sou o player de mais alta prioridade\n");
 				strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
-				for(i=0;i<0;i++)
+				for(i=0;i<10;i++)
 				{	
 					if(i != current_user)
 					{
@@ -385,7 +385,7 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 			}
 		}
 	}
-	if(argp->attr.booleanVar)
+	if(argp->attr.booleanVar == 1)
 	{
 		memcpy(&ask[argp->next],argp,sizeof(form));//caso eu esteja recebendo uma questao do grandao
 		has_ask++; 
