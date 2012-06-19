@@ -96,7 +96,7 @@ progjogo_1(char *host)
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
 			}
-			printf("What to do, %d\n",result_1->action);
+		//	printf("What to do, %d\n",result_1->action);
 			char filename[60];
 			switch(result_1->action)
 			{
@@ -115,12 +115,11 @@ progjogo_1(char *host)
 					if(has_questions == 0)
 					{
 						printf("Parabens voce foi escolhido como coordenador!!!\n");
-						printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
 					}
 					i=3;
 					while(i--)
-					{
-						
+					{	
+						printf("Digite o nome do arquivo que contem as perguntas a serem enviadas\n");
 						if(has_questions)
 						{
 							memcpy(&sendask_1_arg, &questions[i], sizeof(form));
@@ -187,8 +186,6 @@ progjogo_1(char *host)
 						//clnt_perror (clnt, "call failed");
 					}
 					break;
-				default:
-					sleep(1);
 			}
 		}
 	//}
@@ -216,13 +213,6 @@ int
 main (int argc, char *argv[])
 {
 	char *host = "localhost";
-
-	//if (argc < 2) {
-		//printf ("usage: %s server_host\n", argv[0]);
-		//exit (1);
-	//}
-	//host = argv[1];
 	progjogo_1 (host);
-//	readQuestions("teste.txt");
 	exit (0);
 }

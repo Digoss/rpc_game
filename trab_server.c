@@ -446,7 +446,7 @@ nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 	static infoperson  result;
 	if(argp->attr.booleanVar != 1)
 	{
-		printf("Verificando se hosts estao vivos");
+		printf("Verificando se hosts estao vivos\n");
 		CLIENT *clnt;
 		infoperson  *result_5;
 		 infoperson  nicetomeetyou_1_arg;
@@ -462,12 +462,14 @@ nicetomeetyou_1_svc(infoperson *argp, struct svc_req *rqstp)
 	
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
+					printf("Host %s nao esta respondendo\n",host);
 					list[i].keepAlive = 0;
 					check_end();	
 				}
 
 				result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
                         	if (result_5 == (infoperson *) NULL) {
+					printf("Host %s nao esta respondendo\n",host);
 					list[i].keepAlive = 0;
 					check_end();
 				}
