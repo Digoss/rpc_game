@@ -14,6 +14,8 @@ form answer[10]; //respostas dadas ao coordenador
 
 int count_answer[10]; //marcador dos players que respoderao
 
+int champions[10]; //vetor com a ordem dos vencedores
+
 int responses[3]; //respostas das perguntas, guardada pelo coordenador
 
 int reset; //quando player detecta que coordenador nao esta mais ativo
@@ -34,6 +36,7 @@ struct user_ip{
 	char ip[40];
 	int points;
 	int keepAlive;
+	int marked;
 };
 
 struct user_ip list[10]; //lista de ips
@@ -107,6 +110,41 @@ find_by_address(commomattributtes attr)
 	return -1;
 }
 
+void
+bubble_sort_game()
+{
+	//implementacao errada, nao garente que todos estejam ordenados no array final
+	//verificar se existe players nao marcados
+	//champions
+	int i,j;
+	for(i=0;i<10;i++)
+	{
+		max = i;
+		for(j=0;j<10;j++)
+		{
+			if(list[max].points < list[j].points)
+			{
+				if(list[j].marked == 0)
+				{
+					max = j;
+				}
+			}
+			else if(list[max].points == list[j].points)
+			{
+				if(i > j)
+				{	
+					if(list[j].marked == 0)
+					{
+						max = j;
+					}
+				}
+			}
+		}
+		list[max].marked = 1;
+		champions[i] = max;
+	}
+}
+
 int
 check_end()
 {
@@ -118,9 +156,42 @@ check_end()
 				all_returned = 0;
 	if(all_returned)
 	{
+		for(i=0,i<10;i++)
+		{
+			plus_point(i);
+		}
+		bubble_sort_game();
+		printf("Vencedores\n\n");
+		//dar print do coordenador
+		for(i=0;i<5;i++)
+		{
+			printf("Nome: %s",list[champions[i]].name);
+			printf("Idade: %d",list[champions[i]].age);
+			printf("Pontos: %d\n",list[champions[i]].points);
+		}
+		printf("Nao classificados\n\n");
+		for(;i<10;i++)
+		{
+			printf("Nome: %s",list[champions[i]].name);
+			printf("Idade: %d",list[champions[i]].age);
+			printf("Pontos: %d",list[champions[i]].points);
+		}
 		//fim de jogo
 	}
 	return 1;
+}
+
+int
+plus_point(int index)
+{
+	int i;
+	for(i=0;i<3;i++)
+	{
+		if(reponses[i] == answer[index].answer[i])
+		{
+			list[index].points = 1 + list[index].points;
+		}
+	}
 }
 
 //fazer parse de um arquivo que contenha o endereco ip dos hosts
@@ -150,6 +221,10 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 		finished = 1;
 		result.action = 3;
 	}
+	else if(current_user == manger)
+	{
+		result.action = 4;
+	}
 	else
 	{
 		//result.attr.booleanVar = 0;
@@ -163,7 +238,7 @@ control *
 checkhost_1_svc(control *argp, struct svc_req *rqstp)
 {	
 
-	if(gamestarted)
+	if(gamestarted) //se game ainda nao comecou para o usuario corrente, le arquivo de jogadores e inicia partida
 	{
 		readPlayers();
 		gamestarted = 0;
