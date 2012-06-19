@@ -415,7 +415,7 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 			printf("2\n");
 			int formsize = sizeof(form);
 			printf("3\n");
-			memcpy(answer+index*formsize, argp, formsize);
+			memcpy(&answer[index], argp, formsize);
 			printf("4\n");
 			count_answer[index] = 1;
 			printf("5\n");
