@@ -163,6 +163,7 @@ check_end()
 	{
 		for(i=0;i<10;i++)
 		{
+			printf("Fez o plus");
 			plus_point(i);
 		}
 		bubble_sort_game();
@@ -406,18 +407,25 @@ sendanswer_1_svc(form *argp, struct svc_req *rqstp)
 	
 	if(current_user == manager) //se processo corrente e o coordenador recebendo respostas
 	{
+		printf("Coordenador recebeu respostas de %s\n", argp->attr.address);
 		if(find_by_address(argp->attr) >= 0)
 		{
+			printf("1\n");
 			int index = find_by_address(argp->attr);
+			printf("2\n");
 			int formsize = sizeof(form);
+			printf("3\n");
 			memcpy(answer+index*formsize, argp, formsize);
+			printf("4\n");
 			count_answer[index] = 1;
+			printf("5\n");
 			check_end();
+			printf("6\n");
 		}
 	}
 	else //se processo corrente recebe resposta do cliente, a envia para o coordenador
 	{
-		printf("Estou aqui\n");
+		printf("Cliente enviando respostas ao coordenador\n");
 		memcpy(&answer[current_user],argp,sizeof(form));
 
 		CLIENT *clnt;
