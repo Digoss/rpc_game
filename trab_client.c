@@ -80,12 +80,14 @@ progjogo_1(char *host)
 	//}
 	//if(result_5->attr.booleanVar)
 	//{
+	printf("Mandando msg\n");
 	checkhost_1_arg.action = 0;
 	checkhost_1_arg.attr.booleanVar = 0;
 	result_2 = checkhost_1(&checkhost_1_arg, clnt);
 	if (result_2 == (control *) NULL) {
 		clnt_perror (clnt, "call failed");
-	} 
+	}
+	printf("Msg recebida\n");
 		
 		int i;
 		while(1)
@@ -94,7 +96,7 @@ progjogo_1(char *host)
 			if (result_1 == (control *) NULL) {
 				clnt_perror (clnt, "call failed");
 			}
-			
+			printf("What to do, %d\n",result_1->action);
 			char filename[60];
 			switch(result_1->action)
 			{
@@ -213,7 +215,7 @@ progjogo_1(char *host)
 int
 main (int argc, char *argv[])
 {
-	char *host = "10.32.143.175";
+	char *host = "10.32.143.181";
 
 	//if (argc < 2) {
 		//printf ("usage: %s server_host\n", argv[0]);

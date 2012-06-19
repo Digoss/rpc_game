@@ -239,6 +239,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 
 	if(gamestarted) //se game ainda nao comecou para o usuario corrente, le arquivo de jogadores e inicia partida
 	{
+		printf("Jogo comecando\n");
 		readPlayers();
 		gamestarted = 0;
 		printf("Nome: %sIdade: %d\nIP: %s",list[current_user].name,list[current_user].age,list[current_user].ip);
@@ -251,6 +252,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 	
 	if(argp->action == 100) //outro servidor avisa que processo corrente e o de maior prioridade vivo achado por ele
 	{
+		printf("Fui avisado que sou o novo coordenador\n");
 		int i;
 		char *host;
 		strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
@@ -277,17 +279,20 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 	else if(argp->attr.booleanVar)//quando recebe aviso do novo coordenador 
 	{	
 		manager = find_by_address(argp->attr);
-		printf("Recebi msg de %d",manager);
+		printf("Recebi msg de %d, dizendo que ele e o novo coordenador\n",manager);
 		clear_all();
 	}
 	else// quando recebe mensagem originada por um cliente
 	{
+		printf("Cliente detectou que coordenador esta fora\n");
 		char *host;
 		int i;
 		for(i=0;i<10;i++)
 		{
 			if(i == current_user) //quando processo corrente e o de maior prioridade
 			{
+				manager = current_user;
+				printf("Sou o player de mais alta prioridade\n");
 				strcpy(checkhost_1_arg.attr.address, list[current_user].ip);
 				for(i=0;i<0;i++)
 				{	
@@ -305,13 +310,14 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		        			}
 						//enviar mensagem avisando que agora o processo corrente e o coordenador
 					}
+					printf("Enviei msg para %s",host);
 				}
-				manager = current_user;
 				break;
 			}
 			else if(i != current_user)// procura o processo de maior prioridade e envia mensagem
 			{
 				host = list[i].ip;
+				printf("Verificando que %s esta vivo para ser o novo coordenador\n",host);
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
 					continue;
@@ -321,6 +327,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		        	if (result_2 == (control *) NULL) {
 					continue;
 		        	}
+				printf("%s sera o novo coordenador\n",host);
 				break;
 			}
 		}
