@@ -236,13 +236,13 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 control *
 checkhost_1_svc(control *argp, struct svc_req *rqstp)
 {	
-
+	printf("Game %d", gamestarted);
 	if(gamestarted) //se game ainda nao comecou para o usuario corrente, le arquivo de jogadores e inicia partida
 	{
 		printf("Jogo comecando\n");
 		readPlayers();
 		gamestarted = 0;
-		printf("Nome: %sIdade: %d\nIP: %s",list[current_user].name,list[current_user].age,list[current_user].ip);
+		printf("Nome: %sIdade: %d\nIP: %s\n",list[current_user].name,list[current_user].age,list[current_user].ip);
 	}
 	static control  result;
 	CLIENT *clnt;
@@ -270,6 +270,7 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 		        	if (result_2 == (control *) NULL) {
 					continue;
         			}
+				printf("Msg enviada para %s", host);
 				//enviar mensagem avisando que agora o processo corrente e o coordenador
 			}
 		}
@@ -301,11 +302,13 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 						host = list[i].ip;
 						clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 	                                	if (clnt == NULL) {
-       	                                		 continue;
+							printf("Host %s esta fora\n",host);
+       	                                		continue;
        	                        		}
 						checkhost_1_arg.attr.booleanVar = 1;
 						result_2 = checkhost_1(&checkhost_1_arg, clnt);
 				        	if (result_2 == (control *) NULL) {
+							printf("Host %s esta fora\n",host);
 							continue;
 		        			}
 						//enviar mensagem avisando que agora o processo corrente e o coordenador
