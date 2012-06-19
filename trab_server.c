@@ -113,13 +113,12 @@ find_by_address(commomattributtes attr)
 void
 bubble_sort_game()
 {
-	//implementacao errada, nao garente que todos estejam ordenados no array final
 	//verificar se existe players nao marcados
 	//champions
 	int i,j;
 	for(i=0;i<10;i++)
 	{
-		max = i;
+		max = 0;
 		for(j=0;j<10;j++)
 		{
 			if(list[max].points < list[j].points)
@@ -227,7 +226,6 @@ whatdoto_1_svc(control *argp, struct svc_req *rqstp)
 	}
 	else
 	{
-		//result.attr.booleanVar = 0;
 		result.action = 0;
 	}
 
@@ -366,7 +364,6 @@ sendask_1_svc(form *argp, struct svc_req *rqstp)
 				was_send = 1;
 				list[i].keepAlive = 1;
 				//manter um array com os participantes que receberao a pergunta
-				///ainda necessita dos tratamentos de erro
 			}
 		}
 	}

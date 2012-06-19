@@ -177,6 +177,7 @@ progjogo_1(char *host)
 				case 3://se esta recebendo resultados
 					printf("Obrigado por ter participado\n");
 					printf("Dirija-se ate o coordenador para obter os resultados");
+					exit(0);
 					break;
 				case 4:
 					result_5 = nicetomeetyou_1(&nicetomeetyou_1_arg, clnt);
