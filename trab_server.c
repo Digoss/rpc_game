@@ -323,11 +323,13 @@ checkhost_1_svc(control *argp, struct svc_req *rqstp)
 				printf("Verificando que %s esta vivo para ser o novo coordenador\n",host);
 				clnt = clnt_create (host, PROGJOGO, VERJOGO, "udp");
 				if (clnt == NULL) {
+					printf("oi");
 					continue;
 		        	}
 				checkhost_1_arg.action = 100; //avisa ao host destino que e o coordenador
 				result_2 = checkhost_1(&checkhost_1_arg, clnt);
 		        	if (result_2 == (control *) NULL) {
+					printf("tchau");
 					continue;
 		        	}
 				printf("%s sera o novo coordenador\n",host);

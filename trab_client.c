@@ -215,7 +215,7 @@ progjogo_1(char *host)
 int
 main (int argc, char *argv[])
 {
-	char *host = "10.32.143.181";
+	char *host = "localhost";
 
 	//if (argc < 2) {
 		//printf ("usage: %s server_host\n", argv[0]);
